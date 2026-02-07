@@ -1,0 +1,25 @@
+{
+  "name": "noir",
+  "version": "1.0.0",
+  "description": "Claude Code plugin for Noir zero-knowledge circuit development. Provides skills and commands for writing, testing, proving, and verifying Noir circuits.",
+  "author": {
+    "name": "critesjosh"
+  },
+  "keywords": [
+    "noir",
+    "zero-knowledge",
+    "zk-proofs",
+    "circuits",
+    "barretenberg",
+    "cryptography"
+  ],
+  "license": "MIT",
+  "repository": "https://github.com/critesjosh/noir-claude-plugin",
+  "mcpServers": {
+    "noir": {
+      "command": "npx",
+      "args": ["-y", "noir-mcp-server"],
+      "env": {}
+    }
+  }
+}

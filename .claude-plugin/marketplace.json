@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "noir-plugins",
+  "owner": {
+    "name": "critesjosh"
+  },
+  "plugins": [
+    {
+      "name": "noir",
+      "source": {
+        "source": "github",
+        "repo": "critesjosh/noir-claude-plugin"
+      },
+      "description": "Claude Code plugin for Noir zero-knowledge circuit development",
+      "version": "1.0.0"
+    }
+  ]
+}
