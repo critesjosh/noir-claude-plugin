@@ -41,10 +41,11 @@ fn main(x: Field, y: Field) {
 
 ```rust
 // Prove knowledge of a preimage that hashes to a known digest
-use std::hash::poseidon2::Poseidon2::hash;
+// Requires poseidon dependency in Nargo.toml
+use poseidon::poseidon2::Poseidon2;
 
 fn main(preimage: [Field; 4], pub expected_hash: Field) {
-    let computed = hash(preimage, preimage.len());
+    let computed = Poseidon2::hash(preimage, preimage.len());
     assert_eq(computed, expected_hash, "hash mismatch");
 }
 ```

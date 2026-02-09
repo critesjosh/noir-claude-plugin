@@ -8,7 +8,7 @@ Encapsulate all proving logic in a reusable hook:
 
 ```typescript
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { CompiledCircuit } from "@noir-lang/types";
+import type { CompiledCircuit } from "@noir-lang/noir_js";
 
 type ProofStatus = "idle" | "proving" | "verified" | "error";
 

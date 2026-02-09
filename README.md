@@ -98,7 +98,7 @@ noir_status()
 
 - Full pipeline: compile, load artifact, generate witness, prove, verify
 - `@noir-lang/noir_js` for witness generation and oracle callbacks
-- `@noir-lang/backend_barretenberg` for proof generation
+- `@aztec/bb.js` for proof generation
 - Input encoding, artifact loading, version compatibility
 
 ### Web Integration

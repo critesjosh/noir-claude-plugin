@@ -7,15 +7,16 @@ All Noir proving must happen in a Web Worker to avoid freezing the browser. This
 ```typescript
 // proof-worker.ts
 import { Noir } from "@noir-lang/noir_js";
-import { UltraHonkBackend } from "@noir-lang/backend_barretenberg";
+import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js";
 
 self.onmessage = async (e: MessageEvent) => {
   const { type, circuit, inputs } = e.data;
 
   if (type === "prove") {
     try {
+      const api = await Barretenberg.new({ threads: 1 });
       const noir = new Noir(circuit);
-      const backend = new UltraHonkBackend(circuit.bytecode);
+      const backend = new UltraHonkBackend(circuit.bytecode, api);
 
       // Step 1: Generate witness
       self.postMessage({ type: "status", phase: "witness" });
@@ -32,8 +33,6 @@ self.onmessage = async (e: MessageEvent) => {
         publicInputs: proof.publicInputs,
       });
 
-      // Clean up WASM memory
-      await backend.destroy();
     } catch (err) {
       self.postMessage({
         type: "error",
@@ -44,13 +43,13 @@ self.onmessage = async (e: MessageEvent) => {
 
   if (type === "verify") {
     try {
-      const backend = new UltraHonkBackend(circuit.bytecode);
+      const api = await Barretenberg.new({ threads: 1 });
+      const backend = new UltraHonkBackend(circuit.bytecode, api);
       const isValid = await backend.verifyProof({
         proof: e.data.proof,
         publicInputs: e.data.publicInputs,
       });
       self.postMessage({ type: "verification-result", isValid });
-      await backend.destroy();
     } catch (err) {
       self.postMessage({
         type: "error",
@@ -169,25 +168,25 @@ useEffect(() => {
 // proof-worker.ts
 import * as Comlink from "comlink";
 import { Noir } from "@noir-lang/noir_js";
-import { UltraHonkBackend } from "@noir-lang/backend_barretenberg";
+import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js";
 
 const prover = {
   async generateProof(
     circuit: any,
     inputs: Record<string, string | string[]>
   ) {
+    const api = await Barretenberg.new({ threads: 1 });
     const noir = new Noir(circuit);
-    const backend = new UltraHonkBackend(circuit.bytecode);
+    const backend = new UltraHonkBackend(circuit.bytecode, api);
     const { witness } = await noir.execute(inputs);
-    const proof = await backend.generateProof(witness);
-    await backend.destroy();
-    return { proof: proof.proof, publicInputs: proof.publicInputs };
+    const { proof, publicInputs } = await backend.generateProof(witness);
+    return { proof, publicInputs };
   },
 
   async verifyProof(circuit: any, proof: Uint8Array, publicInputs: string[]) {
-    const backend = new UltraHonkBackend(circuit.bytecode);
+    const api = await Barretenberg.new({ threads: 1 });
+    const backend = new UltraHonkBackend(circuit.bytecode, api);
     const isValid = await backend.verifyProof({ proof, publicInputs });
-    await backend.destroy();
     return isValid;
   },
 };

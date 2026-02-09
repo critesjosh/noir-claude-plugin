@@ -29,7 +29,7 @@ For dynamic or runtime loading:
 
 ```typescript
 import { readFileSync } from "fs";
-import { CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit } from "@noir-lang/noir_js";
 
 const circuit: CompiledCircuit = JSON.parse(
   readFileSync("./target/my_circuit.json", "utf-8")
@@ -40,7 +40,7 @@ const circuit: CompiledCircuit = JSON.parse(
 
 ```typescript
 import { readFileSync } from "fs";
-import { CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit } from "@noir-lang/noir_js";
 
 function loadCircuit(name: string): CompiledCircuit {
   return JSON.parse(
@@ -59,7 +59,7 @@ const mintCircuit = loadCircuit("mint");
 Serve artifacts as static files and fetch them at runtime:
 
 ```typescript
-import { CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit } from "@noir-lang/noir_js";
 
 async function loadCircuit(name: string): Promise<CompiledCircuit> {
   const response = await fetch(`/artifacts/${name}.json`);
@@ -85,10 +85,10 @@ const circuit = await import("../target/my_circuit.json");
 
 ## TypeScript Typing
 
-Use `CompiledCircuit` from `@noir-lang/types` for type safety:
+Use `CompiledCircuit` from `@noir-lang/noir_js` for type safety:
 
 ```typescript
-import { CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit } from "@noir-lang/noir_js";
 
 const circuit: CompiledCircuit = /* loaded artifact */;
 ```
@@ -106,7 +106,7 @@ Check versions:
 nargo --version
 
 # JS package versions
-npm ls @noir-lang/noir_js @noir-lang/backend_barretenberg @noir-lang/types
+npm ls @noir-lang/noir_js @aztec/bb.js
 ```
 
 Version mismatch symptoms:
@@ -115,10 +115,10 @@ Version mismatch symptoms:
 - `Error: Unknown opcode` -- bytecode version mismatch
 - Unexpected ABI parsing errors
 
-Fix by aligning versions:
+Fix by aligning the `@noir-lang/noir_js` version with your `nargo` version:
 
 ```bash
-npm install @noir-lang/noir_js@<version> @noir-lang/backend_barretenberg@<version> @noir-lang/types@<version>
+npm install @noir-lang/noir_js@<version> @aztec/bb.js
 ```
 
 ## Artifact Structure Reference

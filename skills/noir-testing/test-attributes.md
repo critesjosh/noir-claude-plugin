@@ -10,7 +10,8 @@ Runs as a constrained function, generating real constraints. This is the most th
 #[test]
 fn test_hash_output() {
     let input = [1, 2, 3];
-    let hash = std::hash::poseidon2::Poseidon2::hash(input, input.len());
+    // Requires poseidon dependency in Nargo.toml
+    let hash = poseidon::poseidon2::Poseidon2::hash(input, input.len());
     assert(hash != 0);
 }
 ```

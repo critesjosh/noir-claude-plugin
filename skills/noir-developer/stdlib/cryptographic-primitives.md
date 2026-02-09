@@ -2,25 +2,41 @@
 
 ## Hash Functions
 
-### Poseidon2 (ZK-Friendly -- Cheapest)
+### Poseidon2 (ZK-Friendly -- Cheapest) -- External Library
 
 The recommended hash for in-circuit use. Operates natively over `Field` elements with minimal constraints.
 
+**Requires a dependency in `Nargo.toml`:**
+
+```toml
+[dependencies]
+poseidon = { tag = "v0.1.1", git = "https://github.com/noir-lang/poseidon" }
+```
+
 ```rust
-use std::hash::poseidon2::Poseidon2::hash;
+use poseidon::poseidon2::Poseidon2;
 
 fn main(inputs: [Field; 4], pub expected: Field) {
-    let h = hash(inputs, inputs.len());
+    let h = Poseidon2::hash(inputs, inputs.len());
     assert_eq(h, expected);
 }
 ```
 
 **When to use:** Default choice for any in-circuit hashing (Merkle trees, commitments, nullifiers).
 
-### SHA-256
+### SHA-256 -- External Library
+
+Full SHA-256 hashing has been moved out of the standard library.
+
+**Requires a dependency in `Nargo.toml`:**
+
+```toml
+[dependencies]
+sha256 = { tag = "v0.1.0", git = "https://github.com/noir-lang/sha256" }
+```
 
 ```rust
-use std::hash::sha256;
+use sha256::sha256;
 
 fn main(input: [u8; 32]) -> pub [u8; 32] {
     sha256(input)
@@ -29,35 +45,33 @@ fn main(input: [u8; 32]) -> pub [u8; 32] {
 
 **When to use:** EVM compatibility, interoperability with Ethereum contracts, verifying external data.
 
+**Note:** The stdlib still provides `std::hash::sha256_compression` for low-level access to the SHA-256 compression function, but not the full hash.
+
 ### Blake2s
 
 ```rust
-use std::hash::blake2s;
-
 fn main(input: [u8; 32]) -> pub [u8; 32] {
-    blake2s(input)
+    std::hash::blake2s(input)
 }
 ```
 
 ### Blake3
 
 ```rust
-use std::hash::blake3;
-
 fn main(input: [u8; 32]) -> pub [u8; 32] {
-    blake3(input)
+    std::hash::blake3(input)
 }
 ```
 
-### Keccak256
+**Note:** Barretenberg limits blake3 inputs to 1024 bytes.
 
-```rust
-use std::hash::keccak256;
+### Keccak256 -- External Library
 
-fn main(input: [u8; 32]) -> pub [u8; 32] {
-    keccak256(input, input.len() as u32)
-}
-```
+Full Keccak256 hashing has been moved out of the standard library.
+
+Check [awesome-noir](https://github.com/noir-lang/awesome-noir) for the current Keccak256 library.
+
+**Note:** The stdlib still provides `std::hash::keccakf1600` for the raw Keccak-f[1600] permutation on `[u64; 25]`, but not the full hash.
 
 **When to use:** EVM compatibility when matching Solidity's `keccak256`.
 
@@ -73,7 +87,7 @@ fn main(inputs: [Field; 2]) -> pub Field {
 
 ### Pedersen Commitment
 
-Returns a point (x, y) rather than a single field element.
+Returns an `EmbeddedCurvePoint` with `x`, `y`, and `is_infinite` fields.
 
 ```rust
 use std::hash::pedersen_commitment;
@@ -86,14 +100,14 @@ fn main(inputs: [Field; 2]) -> pub Field {
 
 ### Hash Cost Comparison
 
-| Hash | Input Type | Output | Relative Cost | Use Case |
+| Hash | Input Type | Output | Relative Cost | Location |
 |------|-----------|--------|---------------|----------|
-| Poseidon2 | `[Field; N]` | `Field` | Lowest | In-circuit default |
-| Pedersen | `[Field; N]` | `Field` | Low | Legacy, commitments |
-| SHA-256 | `[u8; N]` | `[u8; 32]` | High | EVM compatibility |
-| Blake2s | `[u8; N]` | `[u8; 32]` | High | General-purpose |
-| Blake3 | `[u8; N]` | `[u8; 32]` | High | General-purpose |
-| Keccak256 | `[u8; N]` | `[u8; 32]` | Highest | Solidity compat |
+| Poseidon2 | `[Field; N]` | `Field` | Lowest | External: `poseidon` |
+| Pedersen | `[Field; N]` | `Field` / `EmbeddedCurvePoint` | Low | `std::hash` |
+| Blake2s | `[u8; N]` | `[u8; 32]` | High | `std::hash` |
+| Blake3 | `[u8; N]` | `[u8; 32]` | High | `std::hash` |
+| SHA-256 | `[u8; N]` | `[u8; 32]` | High | External: `sha256` |
+| Keccak256 | `[u8; N]` | `[u8; 32]` | Highest | External library |
 
 ## Signature Verification
 
@@ -133,48 +147,16 @@ fn main(
 
 **When to use:** WebAuthn, passkeys, hardware security modules.
 
-### Schnorr (Embedded Curve)
+### Schnorr and EdDSA -- Removed from Stdlib
 
-Schnorr signatures over Noir's embedded curve (Grumpkin).
-
-```rust
-use std::schnorr::verify_signature;
-use std::embedded_curve_ops::EmbeddedCurvePoint;
-
-fn main(
-    public_key: EmbeddedCurvePoint,
-    signature: [u8; 64],
-    message: [u8; 32],
-) {
-    let valid = verify_signature(public_key.x, public_key.y, signature, message);
-    assert(valid, "invalid schnorr signature");
-}
-```
-
-**When to use:** Native in-circuit signatures with minimal constraint cost.
-
-### EdDSA
-
-EdDSA verification using Poseidon hash on the embedded curve.
-
-```rust
-use std::eddsa::eddsa_poseidon_verify;
-use std::embedded_curve_ops::EmbeddedCurvePoint;
-
-fn main(pub_key: EmbeddedCurvePoint, signature_s: Field, signature_r8: EmbeddedCurvePoint, message: Field) {
-    let valid = eddsa_poseidon_verify(pub_key.x, pub_key.y, signature_s, signature_r8.x, signature_r8.y, message);
-    assert(valid, "invalid eddsa signature");
-}
-```
+Schnorr signature verification (`std::schnorr`) and EdDSA verification (`std::eddsa`) have been **removed from the standard library**. Check [awesome-noir](https://github.com/noir-lang/awesome-noir) for community-maintained alternatives or use the embedded curve operations directly.
 
 ## Choosing the Right Primitive
 
 | Need | Recommended |
 |------|-------------|
-| In-circuit hashing (Merkle, commitments) | Poseidon2 |
-| EVM/Solidity interop | SHA-256 or Keccak256 |
-| General-purpose hash | Blake2s or Blake3 |
-| Ethereum/Bitcoin signatures | ECDSA secp256k1 |
-| Passkey/WebAuthn signatures | ECDSA secp256r1 |
-| Cheapest in-circuit signatures | Schnorr on embedded curve |
-| EdDSA-based protocols | EdDSA with Poseidon |
+| In-circuit hashing (Merkle, commitments) | Poseidon2 (external `poseidon` lib) |
+| EVM/Solidity interop | SHA-256 (external `sha256` lib) or Keccak256 (external) |
+| General-purpose hash | Blake2s or Blake3 (stdlib) |
+| Ethereum/Bitcoin signatures | ECDSA secp256k1 (stdlib) |
+| Passkey/WebAuthn signatures | ECDSA secp256r1 (stdlib) |

@@ -86,16 +86,12 @@ fn main(arr: [u64; 5]) -> pub [u64; 5] {
 
 ### Debugging with println
 
-`println` only works in unconstrained code:
+`println` works in both constrained and unconstrained code (it wraps in `unsafe` internally). Format strings (`f"..."`) also work in both contexts:
 
 ```rust
-unconstrained fn debug_value(label: str<10>, x: Field) {
-    println(f"{label}: {x}");
-}
-
 fn main(x: Field) {
-    // Print during witness generation for debugging
-    unsafe { debug_value("input x", x) };
+    // println works directly in constrained code
+    println(f"input x: {x}");
     assert(x != 0);
 }
 ```
@@ -136,7 +132,8 @@ Unconstrained functions have access to operations not available in constrained c
 | Feature | Constrained | Unconstrained |
 |---------|------------|---------------|
 | Slices (dynamic arrays) | No | Yes |
-| `println` / `f""` strings | No | Yes |
+| `println` | Yes (wraps unsafe internally) | Yes |
+| `f""` format strings | Yes | Yes |
 | Unbounded loops | No | Yes |
 | Integer division hints | Expensive | Free |
 | Oracle calls | No (use `unsafe`) | Yes |

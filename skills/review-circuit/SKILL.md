@@ -73,10 +73,11 @@ Work through each category systematically. Skip categories that are not applicab
 - [ ] Integer types are only used where range checking is genuinely needed -- each adds range-check constraints
 - [ ] Unconstrained hints are used for complex computation -- compute in unconstrained, verify in constrained
 - [ ] Hash function choice is appropriate:
-  - **Poseidon2**: ~20 constraints, use for ZK-internal hashing (commitments, nullifiers, Merkle trees)
-  - **Pedersen**: moderate cost, use for commitments where Poseidon2 is not suitable
-  - **SHA-256**: ~25,000 constraints, use only when EVM/external compatibility is required
-  - **Keccak**: ~25,000 constraints, use only when Ethereum compatibility is required
+  - **Poseidon2** (external `poseidon` lib): ~20 constraints, use for ZK-internal hashing (commitments, nullifiers, Merkle trees)
+  - **Pedersen** (`std::hash`): moderate cost, use for commitments where Poseidon2 is not suitable
+  - **SHA-256** (external `sha256` lib): ~25,000 constraints, use only when EVM/external compatibility is required
+  - **Keccak** (external library): ~25,000 constraints, use only when Ethereum compatibility is required
+  - **Blake2s/Blake3** (`std::hash`): high cost, general-purpose
 - [ ] Loop bounds are minimized -- every iteration multiplies the constraint count
 - [ ] No unnecessary intermediate variables that force extra constraints
 - [ ] `BoundedVec` max sizes are realistic -- oversized maximums waste constraints on unused capacity
@@ -94,6 +95,12 @@ Work through each category systematically. Skip categories that are not applicab
 - [ ] Oracle function signatures match the corresponding JavaScript/TypeScript implementation
 - [ ] Oracle wrapper functions are properly marked `unconstrained`
 - [ ] `#[oracle(name)]` functions have empty bodies
+
+#### 5.4.1 Dependency Checks
+
+- [ ] Hash functions use the correct source -- Poseidon2, SHA-256, and Keccak256 are **external libraries** (not in stdlib)
+- [ ] Schnorr and EdDSA are **no longer in stdlib** -- check for removed imports
+- [ ] `BoundedVec` does not need an explicit import (it is in the prelude)
 
 #### 5.5 Public Input Handling
 
@@ -212,7 +219,7 @@ These are the most frequently encountered issues in Noir circuits. Pay special a
 
 4. **Missing `pub` on inputs** -- Forgetting `pub` on a function parameter means the verifier cannot check that input value. The prover can set it to anything.
 
-5. **SHA-256 for internal hashing** -- Using SHA-256 or Keccak for ZK-internal operations (Merkle trees, nullifiers, commitments) is roughly 1000x more expensive in constraints than Poseidon2. Only use SHA-256/Keccak when external compatibility with EVM or other systems is required.
+5. **SHA-256 for internal hashing** -- Using SHA-256 or Keccak for ZK-internal operations (Merkle trees, nullifiers, commitments) is roughly 1000x more expensive in constraints than Poseidon2. Only use SHA-256/Keccak when external compatibility with EVM or other systems is required. Note that SHA-256, Keccak256, and Poseidon2 are all **external libraries** now, not in the stdlib.
 
 6. **Oversized integer types** -- Using `u64` when `u8` suffices wastes range-check constraints. Each integer operation adds range-check gates proportional to the bit width.
 

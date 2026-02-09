@@ -39,7 +39,7 @@ Never do this:
 
 ```typescript
 // BAD: blocks the main thread
-const proof = await backend.generateProof(witness);
+const { proof, publicInputs } = await backend.generateProof(witness);
 ```
 
 Always delegate to a Web Worker:

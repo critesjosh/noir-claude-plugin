@@ -22,10 +22,10 @@ ReferenceError: SharedArrayBuffer is not defined
 ```typescript
 // vite.config.ts
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [nodePolyfills()],
   server: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
@@ -39,12 +39,28 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ["@noir-lang/backend_barretenberg"],
+    exclude: [
+      "@noir-lang/noirc_abi",
+      "@noir-lang/acvm_js",
+      "@noir-lang/noir_js",
+      "@aztec/bb.js",
+    ],
+  },
+  resolve: {
+    alias: {
+      pino: "pino/browser.js",
+    },
   },
 });
 ```
 
-The `optimizeDeps.exclude` prevents Vite from trying to pre-bundle the WASM-heavy barretenberg package, which would fail.
+Install the required Vite plugin:
+
+```bash
+npm install -D vite-plugin-node-polyfills
+```
+
+The `optimizeDeps.exclude` prevents Vite from trying to pre-bundle the WASM-heavy packages, which would fail. The `nodePolyfills` plugin provides Node.js built-in polyfills needed by `bb.js`.
 
 ## Webpack Configuration
 
@@ -194,6 +210,7 @@ This usually means the WASM file was not served correctly. Check that:
 - The server serves `.wasm` files with `Content-Type: application/wasm`
 - The WASM file is not being pre-processed by the bundler (use the `optimizeDeps.exclude` in Vite)
 - The WASM file path is correct (check the Network tab for 404s)
+- The `vite-plugin-node-polyfills` is installed (required for `@aztec/bb.js`)
 
 ### Out of Memory
 

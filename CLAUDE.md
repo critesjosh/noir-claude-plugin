@@ -33,6 +33,22 @@ Arrays have fixed sizes. There is no heap, no `Vec`, no dynamic resizing. Use:
 
 `Field` is the base type — a ~254-bit prime field element. Arithmetic on `Field` is cheap (1 constraint). Integer types (`u8`, `u32`, `u64`) require range-check constraints and are more expensive.
 
+## Key Dependency: Poseidon2
+
+Poseidon2 (the recommended ZK-friendly hash) is an **external library**, not in the stdlib:
+
+```toml
+[dependencies]
+poseidon = { tag = "v0.1.1", git = "https://github.com/noir-lang/poseidon" }
+```
+
+```rust
+use poseidon::poseidon2::Poseidon2;
+let h = Poseidon2::hash([x, y], 2);
+```
+
+SHA-256, Keccak256, Schnorr, and EdDSA have also been **moved out of the stdlib** to external libraries.
+
 ## Public vs Private Inputs
 
 ```rust
@@ -93,7 +109,6 @@ unconstrained fn get_secret(key: Field) -> Field {
 fn main(x: Field, y: pub Field) -> pub Field {
     assert(x != 0, "x must be non-zero");
     let result = x * y;
-    assert(result as u64 < 1000000);
     result
 }
 ```
@@ -122,7 +137,7 @@ fn test_zero_fails() {
 | `u8`..`u64` | Unsigned integers | Range check constraints |
 | `i8`..`i64` | Signed integers | Range check constraints |
 | `[T; N]` | Fixed-size array | N * cost(T) |
-| `BoundedVec<T, N>` | Variable-length, max N | Up to N * cost(T) |
+| `BoundedVec<T, N>` | Variable-length, max N (in prelude) | Up to N * cost(T) |
 | `str<N>` | Fixed-length string | N bytes |
 | `(T1, T2)` | Tuple | cost(T1) + cost(T2) |
 

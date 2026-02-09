@@ -82,15 +82,15 @@ The compiled artifact version **must match** the `@noir-lang/*` package versions
 # Check nargo version
 nargo --version
 
-# Check JS package version
-npm ls @noir-lang/noir_js
+# Check JS package versions
+npm ls @noir-lang/noir_js @aztec/bb.js
 ```
 
 Keep them in sync:
 
 ```bash
-# If nargo is v1.0.0-beta.3, install matching JS packages
-npm install @noir-lang/noir_js@1.0.0-beta.3 @noir-lang/backend_barretenberg@1.0.0-beta.3
+# If nargo is v1.0.0-beta.18, install matching noir_js package
+npm install @noir-lang/noir_js@1.0.0-beta.18 @aztec/bb.js
 ```
 
 ## Recompilation

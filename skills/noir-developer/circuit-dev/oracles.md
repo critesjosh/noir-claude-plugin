@@ -69,11 +69,12 @@ Register oracle callbacks in your JavaScript/TypeScript code:
 
 ```typescript
 import { Noir } from "@noir-lang/noir_js";
-import { UltraPlonkBackend } from "@aztec/bb.js";
-import circuit from "./target/my_circuit.json";
+import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js";
+import circuit from "./target/my_circuit.json" with { type: "json" };
 
-const backend = new UltraPlonkBackend(circuit.bytecode);
-const noir = new Noir(circuit);
+const api = await Barretenberg.new({ threads: 8 });
+const noir = new Noir(circuit as any);
+const backend = new UltraHonkBackend(circuit.bytecode, api);
 
 // Register the oracle callback
 const oracleCallbacks = {
@@ -88,7 +89,7 @@ const oracleCallbacks = {
 
 // Generate witness with oracle support
 const { witness } = await noir.execute(inputMap, oracleCallbacks);
-const proof = await backend.generateProof(witness);
+const { proof, publicInputs } = await backend.generateProof(witness);
 ```
 
 ## Oracle with Multiple Parameters

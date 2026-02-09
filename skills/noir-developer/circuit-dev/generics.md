@@ -104,7 +104,7 @@ fn are_equal<T>(a: T, b: T) -> bool where T: Eq {
     a == b
 }
 
-fn print_if_debug<T>(x: T) where T: std::fmt::Display {
+fn print_value<T>(x: T) {
     println(x);
 }
 ```

@@ -6,63 +6,60 @@ allowed-tools: Read, Grep, Glob, Edit, Write, Bash
 
 # Noir JavaScript/TypeScript Integration
 
-Use `@noir-lang/noir_js` and `@noir-lang/backend_barretenberg` to compile, prove, and verify Noir circuits from JavaScript or TypeScript.
+Use `@noir-lang/noir_js` and `@aztec/bb.js` to compile, prove, and verify Noir circuits from JavaScript or TypeScript.
 
 ## Pipeline Overview
 
 1. **Compile** circuit with `nargo compile` -- produces a JSON artifact in `target/`
 2. **Load** the artifact in JavaScript
 3. **Generate witness** with `noir_js` (`Noir` class)
-4. **Create proof** with `bb.js` (`BarretenbergBackend` or `UltraHonkBackend`)
+4. **Create proof** with `bb.js` (`UltraHonkBackend`)
 5. **Verify proof** on the client or on-chain
 
 ## Key Packages
 
 | Package | Purpose |
 |---------|---------|
-| `@noir-lang/noir_js` | Witness generation, oracle callbacks |
-| `@noir-lang/backend_barretenberg` | Proof generation and verification (wraps bb.js) |
-| `@noir-lang/types` | TypeScript types for compiled artifacts |
+| `@noir-lang/noir_js` | Witness generation, oracle callbacks, `CompiledCircuit` type |
+| `@aztec/bb.js` | Proof generation and verification (`UltraHonkBackend`, `Barretenberg`) |
 
-All `@noir-lang/*` packages must match the version of `nargo` used to compile the circuit.
+The `@noir-lang/noir_js` package version must match the version of `nargo` used to compile the circuit.
 
 ## Quick Start
 
 ```typescript
 import { Noir } from "@noir-lang/noir_js";
-import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
-import circuit from "../target/my_circuit.json";
+import { Barretenberg, UltraHonkBackend } from "@aztec/bb.js";
+import circuit from "../target/my_circuit.json" with { type: "json" };
 
-// 1. Set up backend and noir instance
-const backend = new BarretenbergBackend(circuit);
-const noir = new Noir(circuit);
+// 1. Initialize backend
+const api = await Barretenberg.new({ threads: 8 });
+const noir = new Noir(circuit as any);
+const backend = new UltraHonkBackend(circuit.bytecode, api);
 
 // 2. Generate witness
-const inputs = { x: "3", y: "4" };
+const inputs = { x: 3, y: 4 };
 const { witness } = await noir.execute(inputs);
 
 // 3. Generate proof
-const proof = await backend.generateProof(witness);
+const { proof, publicInputs } = await backend.generateProof(witness);
 
 // 4. Verify proof
-const isValid = await backend.verifyProof(proof);
+const isValid = await backend.verifyProof({ proof, publicInputs });
 console.log("Proof valid:", isValid);
-
-// 5. Clean up WASM memory
-await backend.destroy();
 ```
 
 ## Input Encoding Rules
 
-All inputs are passed as strings or arrays/objects of strings:
+All inputs are passed as values matching their Noir types:
 
 | Noir Type | JS Encoding | Example |
 |-----------|------------|---------|
-| `Field` | Hex string or decimal string | `"0x1a"` or `"42"` |
-| `u32`, `i8`, etc. | Same as Field | `"255"` |
-| `bool` | `"0"` or `"1"` | `"1"` |
-| `[Field; N]` | JS array of encoded values | `["1", "2", "3"]` |
-| `struct` | JS object with matching field names | `{ x: "1", y: "2" }` |
+| `Field` | Number or hex string | `3` or `"0x1a"` |
+| `u32`, `i8`, etc. | Number or string | `255` |
+| `bool` | Boolean or `"0"`/`"1"` | `true` |
+| `[Field; N]` | JS array of encoded values | `[1, 2, 3]` |
+| `struct` | JS object with matching field names | `{ x: 1, y: 2 }` |
 
 ## Oracle Callbacks
 

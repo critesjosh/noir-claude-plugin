@@ -17,11 +17,12 @@ noir_search_stdlib({ query: "poseidon" })
 
 | Module | Key Items |
 |--------|-----------|
-| `std::hash` | poseidon2, sha256, blake2s, blake3, keccak256, pedersen |
+| `std::hash` | blake2s, blake3, pedersen_hash, pedersen_commitment, sha256_compression, keccakf1600 |
 | `std::ecdsa_secp256k1` | `verify_signature` |
 | `std::ecdsa_secp256r1` | `verify_signature` |
-| `std::schnorr` | `verify_signature` |
-| `std::eddsa` | `eddsa_poseidon_verify` |
-| `std::collections::bounded_vec` | `BoundedVec` |
+| `std::embedded_curve_ops` | `EmbeddedCurvePoint`, `EmbeddedCurveScalar`, `multi_scalar_mul` |
+| `std::collections::bounded_vec` | `BoundedVec` (also in prelude) |
 | `std::collections::map` | `HashMap` |
 | `std::field` | byte conversions, radix decomposition |
+
+**Moved to external libraries:** Poseidon2 (`poseidon`), SHA-256 (`sha256`), Keccak256, Schnorr, EdDSA. See [Cryptographic Primitives](./cryptographic-primitives.md) for details.

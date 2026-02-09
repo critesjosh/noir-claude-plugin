@@ -114,11 +114,9 @@ fn main(x: Field) -> pub (Field, Field) {
 
 ## BoundedVec
 
-Variable-length collection with a compile-time maximum capacity. Use when you need dynamic length in constrained code.
+Variable-length collection with a compile-time maximum capacity. Use when you need dynamic length in constrained code. `BoundedVec` is available in the prelude -- no import needed.
 
 ```rust
-use std::collections::bounded_vec::BoundedVec;
-
 fn main(pub count: u32) {
     let mut items: BoundedVec<Field, 10> = BoundedVec::new();
     items.push(1);

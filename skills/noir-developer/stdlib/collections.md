@@ -4,9 +4,7 @@
 
 A variable-length collection with a compile-time maximum capacity. This is the primary way to handle dynamic-length data in constrained Noir code.
 
-```rust
-use std::collections::bounded_vec::BoundedVec;
-```
+`BoundedVec` is available in the prelude -- no import needed.
 
 ### Creating
 
@@ -86,7 +84,14 @@ A hash map with a fixed maximum capacity. Requires a hasher type.
 ```rust
 use std::collections::map::HashMap;
 use std::hash::BuildHasherDefault;
-use std::hash::poseidon2::Poseidon2Hasher;
+use poseidon::poseidon2::Poseidon2Hasher;
+```
+
+**Note:** `Poseidon2Hasher` comes from the external `poseidon` library, not from `std`. Add to `Nargo.toml`:
+
+```toml
+[dependencies]
+poseidon = { tag = "v0.1.1", git = "https://github.com/noir-lang/poseidon" }
 ```
 
 ### Creating
@@ -100,8 +105,7 @@ let mut map: HashMap<Field, Field, 64, BuildHasherDefault<Poseidon2Hasher>> =
 ### Core Methods
 
 ```rust
-let mut map: HashMap<Field, Field, 64, BuildHasherDefault<Poseidon2Hasher>> =
-    HashMap::default();
+let mut map: HashMap<Field, Field, 64, BuildHasherDefault<Poseidon2Hasher>> = HashMap::default();
 
 // insert
 map.insert(1, 100);

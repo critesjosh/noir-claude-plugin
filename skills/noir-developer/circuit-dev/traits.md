@@ -104,19 +104,7 @@ struct Key {
 
 ### Serialize and Deserialize
 
-Convert to/from fixed-size `Field` arrays. Useful for passing structured data across boundaries.
-
-```rust
-use std::io::{Serialize, Deserialize};
-
-// Derive automatically generates the conversion for simple structs
-#[derive(Serialize, Deserialize)]
-struct Message {
-    sender: Field,
-    content: Field,
-    nonce: Field,
-}
-```
+**Note:** The `Serialize` and `Deserialize` traits are available as comptime concepts in `std::meta` for metaprogramming. They are not general-purpose derive macros in the current stdlib. If you need to convert structs to/from `[Field; N]` arrays, implement the conversion manually or use a library that provides this functionality.
 
 ## Trait Constraints in Generics
 
@@ -158,8 +146,6 @@ struct Credential {
 | `Eq` | Field-by-field equality |
 | `Default` | All fields set to their default (0, false, etc.) |
 | `Hash` | Hash all fields |
-| `Serialize` | Convert to `[Field; N]` |
-| `Deserialize` | Convert from `[Field; N]` |
 
 ## Implementing Traits for External Types
 

@@ -157,7 +157,8 @@ fn test_struct_fields() {
 Compute an expected hash and compare against the function output:
 
 ```rust
-use std::hash::poseidon2::Poseidon2;
+// Requires poseidon dependency in Nargo.toml
+use poseidon::poseidon2::Poseidon2;
 
 fn commit(secret: Field, nonce: Field) -> Field {
     Poseidon2::hash([secret, nonce], 2)
@@ -186,7 +187,7 @@ Use `println` to inspect values during test execution. Output only appears when 
 nargo test --show-output
 ```
 
-`println` works in unconstrained code. In constrained test functions, use the `f"..."` format string syntax:
+`println` works in both constrained and unconstrained code (it wraps in `unsafe` internally):
 
 ```rust
 #[test]
