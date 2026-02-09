@@ -2,7 +2,7 @@
   "mcpServers": {
     "noir": {
       "command": "npx",
-      "args": ["-y", "noir-mcp-server"],
+      "args": ["-y", "noir-mcp-server@latest"],
       "env": {}
     }
   }

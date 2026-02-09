@@ -47,16 +47,30 @@ console.log("Proof valid:", isValid); // true or false
 
 Verification is fast compared to proving. It checks that the proof is valid for the given public inputs.
 
-## Solidity Verifier (EVM Target)
+## Verifier Targets
 
-To generate proofs verifiable on-chain, pass the `verifierTarget: 'evm'` option:
+The `verifierTarget` option controls the hash function and zero-knowledge settings for proof generation and verification:
+
+| `verifierTarget` | Hash | ZK | IPA | Use Case |
+|---|---|---|---|---|
+| *(omitted)* | poseidon2 | no | no | Default native verification |
+| `"evm"` | keccak | yes | no | Solidity on-chain verification |
+| `"evm-no-zk"` | keccak | no | no | EVM verification without zero-knowledge |
+| `"noir-recursive"` | poseidon2 | yes | no | Recursive verification in Noir circuits |
+| `"noir-recursive-no-zk"` | poseidon2 | no | no | Recursive verification without ZK |
+| `"noir-rollup"` | poseidon2 | yes | yes | Rollup circuits with IPA accumulation |
+| `"noir-rollup-no-zk"` | poseidon2 | no | yes | Rollup circuits without ZK |
+| `"starknet"` | starknet | yes | no | Starknet verification via Garaga |
+| `"starknet-no-zk"` | starknet | no | no | Starknet without zero-knowledge |
+
+Pass the target to `generateProof` and `verifyProof`:
 
 ```typescript
+// For EVM/Solidity verification
 const { proof, publicInputs } = await backend.generateProof(witness, {
   verifierTarget: "evm",
 });
 
-// Verify with EVM target
 const isValid = await backend.verifyProof({ proof, publicInputs }, {
   verifierTarget: "evm",
 });
