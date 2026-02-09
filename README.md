@@ -63,7 +63,7 @@ The MCP server defaults to the latest stable Noir version. To switch:
 **Option 2: Call `noir_sync_repos` directly**
 
 ```
-noir_sync_repos({ version: "v1.0.0", force: true })
+noir_sync_repos({ version: "v1.0.0-beta.18", force: true })
 ```
 
 **Check current version:**
