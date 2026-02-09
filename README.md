@@ -57,7 +57,7 @@ The MCP server defaults to the latest stable Noir version. To switch:
 
 ```
 /noir-version                    # Autodetect from project's Nargo.toml
-/noir-version v1.0.0             # Use specific version
+/noir-version v1.0.0-beta.18     # Use specific version
 ```
 
 **Option 2: Call `noir_sync_repos` directly**
