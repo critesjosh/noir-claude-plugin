@@ -12,7 +12,7 @@
         "repo": "critesjosh/noir-claude-plugin"
       },
       "description": "Claude Code plugin for Noir zero-knowledge circuit development",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ]
 }
