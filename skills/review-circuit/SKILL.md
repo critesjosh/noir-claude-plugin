@@ -82,12 +82,22 @@ Work through each category systematically. Skip categories that are not applicab
 - [ ] No unnecessary intermediate variables that force extra constraints
 - [ ] `BoundedVec` max sizes are realistic -- oversized maximums waste constraints on unused capacity
 
+#### 5.2.1 Idiomatic Patterns (see [Noir Idioms](../noir-idioms/SKILL.md))
+
+- [ ] `assert_eq(a, b)` is used instead of `assert(a == b)` -- better error messages
+- [ ] Boolean conditions use `bool` types and operators, not Field arithmetic (e.g., `!flag | other` instead of `(1 - flag as Field) * other_field == 0`)
+- [ ] Conditional values use `if/else` expressions, not manual selects (e.g., `let val = if cond { x } else { y }` instead of `let val = c * (x - y) + y`)
+- [ ] Assertions are hoisted out of conditional branches where possible -- one `assert_eq` on a conditional value is better than separate assertions in each branch
+- [ ] Functions callable in both contexts use `is_unconstrained()` to provide optimized ACIR and Brillig paths where beneficial
+
 #### 5.3 Unconstrained Safety
 
 - [ ] Every unconstrained function result is verified with constraints in the calling code
+- [ ] `unsafe {}` blocks have a `// Safety:` comment explaining what property the constrained verification enforces
 - [ ] `unsafe {}` blocks are followed by assertion or verification logic
 - [ ] No unconstrained results are trusted without verification -- **CRITICAL: unconstrained code can return anything, an attacker controls these values**
 - [ ] The hint pattern is used correctly: compute in unconstrained, then verify with constrained assertions
+- [ ] Hints return only final results, not intermediate scaffolding -- fewer hinted values means fewer constraints
 
 #### 5.4 Oracle Usage
 

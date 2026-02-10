@@ -72,7 +72,7 @@ struct Token {
 fn main() {
     let a = Token { id: 1, amount: 100 };
     let b = Token { id: 1, amount: 100 };
-    assert(a == b);
+    assert_eq(a, b);
 }
 ```
 
@@ -122,7 +122,7 @@ where
     T: Eq,
     T: Hashable,
 {
-    assert(a == b);
+    assert_eq(a, b);
     a.hash()
 }
 ```

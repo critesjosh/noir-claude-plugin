@@ -101,8 +101,10 @@ unconstrained fn get_price(asset_id: Field) -> Field {
 }
 
 fn main(asset_id: Field, expected_price: Field) {
+    // Safety: price is checked against the public expected_price below,
+    // so the prover cannot claim an incorrect price
     let price = unsafe { get_price(asset_id) };
-    assert(price == expected_price);
+    assert_eq(price, expected_price);
 }
 ```
 

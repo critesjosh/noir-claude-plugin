@@ -51,9 +51,9 @@ unconstrained fn hint_sqrt(x: Field) -> Field {
 }
 
 fn verified_sqrt(x: Field) -> Field {
-    // Get the hint from the oracle
+    // Safety: root * root == x is checked below, so the prover must
+    // supply the actual square root (unique in the field for a given x)
     let root = unsafe { hint_sqrt(x) };
-    // Constrain the result -- this is what the proof actually checks
     assert(root * root == x, "invalid square root");
     root
 }

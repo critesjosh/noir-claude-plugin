@@ -31,7 +31,7 @@ fn withdraw(amount: u64, balance: u64) -> u64 {
 #[test]
 fn test_valid_withdrawal() {
     let remaining = withdraw(30, 100);
-    assert(remaining == 70, "remaining balance incorrect");
+    assert_eq(remaining, 70, "remaining balance incorrect");
 }
 ```
 

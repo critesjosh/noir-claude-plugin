@@ -27,8 +27,9 @@ unconstrained fn hint_inverse(x: Field) -> Field {
 }
 
 fn main(x: Field) -> pub Field {
+    // Safety: x * inv == 1 is checked below, so a dishonest prover cannot
+    // substitute an arbitrary value for the inverse
     let inv = unsafe { hint_inverse(x) };
-    // CRITICAL: verify the unconstrained result
     assert(x * inv == 1, "not a valid inverse");
     inv
 }
@@ -55,6 +56,8 @@ unconstrained fn hint_sort(arr: [u64; 5]) -> [u64; 5] {
 }
 
 fn main(arr: [u64; 5]) -> pub [u64; 5] {
+    // Safety: sorted order and element-sum equality are verified below,
+    // so a dishonest prover cannot reorder or substitute values
     let sorted = unsafe { hint_sort(arr) };
 
     // Verify the result is sorted (cheap: N-1 comparisons)
@@ -104,6 +107,8 @@ unconstrained fn hint_division(a: u64, b: u64) -> (u64, u64) {
 }
 
 fn checked_division(a: u64, b: u64) -> (u64, u64) {
+    // Safety: a == b * quotient + remainder and remainder < b are checked below,
+    // which uniquely determines the correct quotient and remainder
     let (quotient, remainder) = unsafe { hint_division(a, b) };
     // Verify: a == b * quotient + remainder
     assert(a == b * quotient + remainder, "bad division");

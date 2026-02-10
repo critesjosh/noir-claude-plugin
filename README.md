@@ -121,6 +121,23 @@ noir_status()
 - Proof soundness: both-branch execution, under-constrained witnesses
 - Structured output with severity levels (Critical/High/Medium/Low)
 
+### Noir Idioms (upstream)
+
+**Noir Idioms** (`noir-idioms`)
+
+- Hint-and-verify patterns for efficient circuits
+- ACIR vs Brillig optimization strategies
+- Type system leverage and conditional best practices
+- Sourced from the [Noir repo](https://github.com/noir-lang/noir) (Apache-2.0)
+
+### ACIR Optimization (upstream)
+
+**ACIR Optimization** (`noir-optimize-acir`)
+
+- Measuring gate count with `nargo compile && bb gates`
+- Optimization loop methodology for reducing circuit size
+- Sourced from the [Noir repo](https://github.com/noir-lang/noir) (Apache-2.0)
+
 ## Slash Commands
 
 | Command | Description |
@@ -142,6 +159,17 @@ The plugin includes LSP (Language Server Protocol) configuration for Noir, provi
 
 **Requirement:** Nargo must be installed. Install via [noirup](https://noir-lang.org/docs/getting_started/installation/).
 
+## Upstream Skill Sync
+
+The `noir-idioms` and `noir-optimize-acir` skills are sourced from the [Noir repo](https://github.com/noir-lang/noir) (Apache-2.0 licensed). To update them:
+
+```bash
+bash scripts/sync-upstream-skills.sh              # fetch from master
+bash scripts/sync-upstream-skills.sh --ref v1.0.0  # fetch from a specific tag
+```
+
+Sync metadata is tracked in `skills/.upstream-sync.json`.
+
 ## What's Included
 
 ```
@@ -153,7 +181,10 @@ noir-plugin/
 ├── .mcp.json                  # Local MCP server config
 ├── commands/
 │   └── noir-version.md        # Version switching command
+├── scripts/
+│   └── sync-upstream-skills.sh # Fetch skills from upstream Noir repo
 ├── skills/
+│   ├── .upstream-sync.json     # Sync metadata (source, ref, SHA, timestamp)
 │   ├── noir-developer/        # Circuit development (hub skill)
 │   │   ├── SKILL.md
 │   │   ├── circuit-dev/       # Structure, types, generics, traits, oracles
@@ -176,6 +207,10 @@ noir-plugin/
 │   │   ├── web-worker-proving.md
 │   │   ├── wasm-setup.md
 │   │   └── ux-patterns.md
+│   ├── noir-idioms/           # Idiomatic patterns (upstream)
+│   │   └── SKILL.md
+│   ├── noir-optimize-acir/    # ACIR optimization (upstream)
+│   │   └── SKILL.md
 │   └── review-circuit/        # Circuit review
 │       └── SKILL.md
 ├── CLAUDE.md                  # Development guidelines (always loaded)

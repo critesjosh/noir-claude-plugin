@@ -73,8 +73,9 @@ unconstrained fn hint_sqrt(x: Field) -> Field {
 }
 
 fn verified_sqrt(x: Field) -> Field {
+    // Safety: result * result == x is checked below, constraining the hint
     let result = unsafe { hint_sqrt(x) };
-    assert(result * result == x);  // Constrained verification
+    assert(result * result == x);
     result
 }
 ```
@@ -235,6 +236,8 @@ For comprehensive patterns, see the skills:
 - **[JavaScript Integration](./skills/noir-js/SKILL.md)** — Compilation, witness generation, proving
 - **[Web Integration](./skills/noir-web/SKILL.md)** — React, Web Workers, WASM setup
 - **[Circuit Review](./skills/review-circuit/SKILL.md)** — Correctness, constraint efficiency, soundness
+- **[Noir Idioms](./skills/noir-idioms/SKILL.md)** — Idiomatic patterns: hint-and-verify, ACIR vs Brillig, type system
+- **[ACIR Optimization](./skills/noir-optimize-acir/SKILL.md)** — Measuring and optimizing circuit gate count
 
 ## Useful Resources
 

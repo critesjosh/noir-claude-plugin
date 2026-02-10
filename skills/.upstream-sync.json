@@ -1,0 +1,10 @@
+{
+  "source": "https://github.com/noir-lang/noir",
+  "ref": "master",
+  "sha": "20aac96320c45e179cbf893f377395ccca0d0855",
+  "synced_at": "2026-02-10T14:27:20Z",
+  "skills": [
+    "noir-idioms",
+    "noir-optimize-acir"
+  ]
+}
